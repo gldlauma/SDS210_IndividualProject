@@ -223,9 +223,7 @@ The project includes several visualizations:
 - stacked bar chart of report categories by year
 - 100% stacked bar chart of category shares
 - choropleth map of reports by Quartier in 2025
-- top 10 Quartiere bar chart
 - choropleth map of `Abfall/Sammelstelle` share by Quartier
-- optional small multiple pie charts showing category composition by Quartier
 
 Saved visualizations are stored in:
 
