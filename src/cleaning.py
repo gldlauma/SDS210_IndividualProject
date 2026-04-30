@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 # Function: converting date columns from text to datetime format
 def parse_datetime_columns(df: pd.DataFrame) -> pd.DataFrame:
     '''
