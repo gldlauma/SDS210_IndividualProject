@@ -75,3 +75,46 @@ def count_reports_by_month(
     )
 
     return monthly_counts
+
+
+def count_reports_by_year_and_category(
+    df: pd.DataFrame,
+    year_column: str = "year",
+    category_column: str = "service_name"
+) -> pd.DataFrame:
+    """
+    Count the number of ZüriWieNeu reports per year and category.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Cleaned ZüriWieNeu report data.
+    year_column : str, default "year"
+        Column containing the year of each report.
+    category_column : str, default "service_name"
+        Column containing the report category.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with one row per year and category combination.
+
+    Output Columns
+    --------------
+    year : int
+        Calendar year.
+    service_name : str
+        Report category.
+    report_count : int
+        Number of reports in that year and category.
+    """
+
+    category_counts = (
+        df
+        .groupby([year_column, category_column])
+        .size()
+        .reset_index(name="report_count")
+        .sort_values([year_column, category_column])
+    )
+
+    return category_counts
