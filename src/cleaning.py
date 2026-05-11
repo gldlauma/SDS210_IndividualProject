@@ -3,16 +3,25 @@ import pandas as pd
 # Function: converting date columns from text to datetime format
 def parse_datetime_columns(df: pd.DataFrame) -> pd.DataFrame:
     '''
-    Convert date columns in the ZüriWieNeu dataset from text to datetime format.   
-    Parameters    
-    ----------    
-    df : pandas.DataFrame        
-        Raw ZüriWieNeu report data.    
-    Returns    
-    -------    
-    pandas.DataFrame        
-        DataFrame with parsed datetime columns.    
-    '''
+Convert date columns in the ZüriWieNeu dataset from text to datetime format.
+
+Uses ISO 8601 parsing with utc=True so that timestamps with different
+timezone offsets are handled consistently. This matters because the CSV
+export uses naive timestamps (e.g. "2024-01-07T23:32:05") while the
+Open311 API returns timestamps with a timezone offset that switches
+between +01:00 (CET, winter) and +02:00 (CEST, summer). Setting
+utc=True converts all timestamps to UTC, producing a single uniformly
+timezone-aware column. Any malformed timestamp becomes NaT.
+
+Parameters
+----------
+df : pandas.DataFrame
+    Raw ZüriWieNeu report data.
+Returns
+-------
+pandas.DataFrame
+    DataFrame with parsed datetime columns.
+'''
 
     df_cleaned = df.copy()
 
@@ -24,8 +33,13 @@ def parse_datetime_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     for column in datetime_columns:
         if column in df_cleaned.columns:
-            df_cleaned[column] = pd.to_datetime(df_cleaned[column], format="%Y-%m-%dT%H:%M:%S")
-    
+            df_cleaned[column] = pd.to_datetime(
+                df_cleaned[column],
+                format="ISO8601",
+                utc=True,
+                errors="coerce"
+        )
+
     return df_cleaned
 
 
