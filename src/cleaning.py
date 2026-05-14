@@ -16,8 +16,9 @@ timezone-aware column. Any malformed timestamp becomes NaT.
 Parameters
 ----------
 df : pandas.DataFrame
-    Raw ZüriWieNeu report data.
-Returns
+    Raw ZüriWieNeu report data, which has been loaded through the "load_csv_data" function in the loading.py script
+
+    Returns
 -------
 pandas.DataFrame
     DataFrame with parsed datetime columns.
