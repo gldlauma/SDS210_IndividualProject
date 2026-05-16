@@ -2,8 +2,8 @@ import pandas as pd
 
 
 def load_csv_data(file_path: str) -> pd.DataFrame:
-    '''
-    Load a local CSV file.
+    """
+    Load ZüriWieNeu report data from a local CSV file.
 
     Parameters
     ----------
@@ -14,6 +14,8 @@ def load_csv_data(file_path: str) -> pd.DataFrame:
     -------
     pandas.DataFrame
         Raw ZüriWieNeu data as a pandas DataFrame.
-    '''
-    df = pd.read_csv(file_path)
+    """
+    # encoding="utf-8-sig" strips the BOM at the start of the file; without it,
+    # the first column name would silently be "\ufeffobjectid" on some readers.
+    df = pd.read_csv(file_path, encoding="utf-8-sig")
     return df

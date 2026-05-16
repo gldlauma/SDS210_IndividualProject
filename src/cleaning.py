@@ -1,34 +1,32 @@
 import pandas as pd
 
+
 def parse_datetime_columns(df: pd.DataFrame) -> pd.DataFrame:
-    '''
-Convert date columns in the ZüriWieNeu dataset from text to datetime format.
+    """
+    Convert date columns in the ZüriWieNeu dataset from text to datetime format.
 
-Uses ISO 8601 parsing with utc=True so that timestamps with different
-timezone offsets are handled consistently. This matters because the CSV
-export uses naive timestamps (e.g. "2024-01-07T23:32:05") while the
-Open311 API returns timestamps with a timezone offset that switches
-between +01:00 (CET, winter) and +02:00 (CEST, summer). Setting
-utc=True converts all timestamps to UTC, producing a single uniformly
-timezone-aware column. Any malformed timestamp becomes NaT.
+    The CSV timestamps are naive ISO 8601 strings in Zurich local time
+    (e.g. "2024-01-07T23:32:05"). The downstream analysis only uses the
+    year and month, so the timestamps are kept as naive datetimes — no
+    UTC conversion is applied. Any malformed timestamp becomes NaT.
 
-Parameters
-----------
-df : pandas.DataFrame
-    Raw ZüriWieNeu report data, which has been loaded through the "load_csv_data" function in the loading.py script
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Raw ZüriWieNeu report data, which has been loaded through the
+        "load_csv_data" function in the loading.py script.
 
     Returns
--------
-pandas.DataFrame
-    DataFrame with parsed datetime columns.
-    '''
-
+    -------
+    pandas.DataFrame
+        DataFrame with parsed datetime columns.
+    """
     df_cleaned = df.copy()
 
     datetime_columns = [
         "requested_datetime",
         "agency_sent_datetime",
-        "updated_datetime"
+        "updated_datetime",
     ]
 
     for column in datetime_columns:
@@ -36,16 +34,26 @@ pandas.DataFrame
             df_cleaned[column] = pd.to_datetime(
                 df_cleaned[column],
                 format="ISO8601",
-                utc=True,
-                errors="coerce"
-        )
+                errors="coerce",
+            )
 
     return df_cleaned
 
-def remove_duplicate_reports(df: pd.DataFrame, id_column: str = "service_request_id") -> pd.DataFrame:
-    '''
+
+def remove_duplicate_reports(
+    df: pd.DataFrame,
+    id_column: str = "service_request_id"
+) -> pd.DataFrame:
+    """
     Remove duplicate reports from the ZüriWieNeu dataset based on the unique
     service request ID.
+
+    Note
+    ----
+    On the current CSV export this function finds 0 duplicates —
+    service_request_id is already unique. It is kept as a defensive step
+    in case a future export contains duplicates (for example after
+    merging two snapshots).
 
     Parameters
     ----------
@@ -58,8 +66,7 @@ def remove_duplicate_reports(df: pd.DataFrame, id_column: str = "service_request
     -------
     pandas.DataFrame
         DataFrame with duplicate reports removed.
-    '''
-
+    """
     df_cleaned = df.copy()
 
     if id_column in df_cleaned.columns:
@@ -68,9 +75,43 @@ def remove_duplicate_reports(df: pd.DataFrame, id_column: str = "service_request
     return df_cleaned
 
 
-# Function: converting date columns from text to datetime format
-def add_time_columns(df: pd.DataFrame, date_column: str = "requested_datetime") -> pd.DataFrame:
-    '''
+def drop_redundant_service_code(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Drop the service_code column if it is identical to service_name.
+
+    The ZüriWieNeu export contains both 'service_code' and 'service_name'.
+    In the current export they hold identical values for every row, so
+    'service_code' is redundant. This function drops it if (and only if)
+    that identity holds; otherwise it returns the DataFrame unchanged so
+    no information is lost silently.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        ZüriWieNeu report data.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with service_code removed if it duplicated service_name.
+    """
+    df_cleaned = df.copy()
+
+    if (
+        "service_code" in df_cleaned.columns
+        and "service_name" in df_cleaned.columns
+        and (df_cleaned["service_code"] == df_cleaned["service_name"]).all()
+    ):
+        df_cleaned = df_cleaned.drop(columns="service_code")
+
+    return df_cleaned
+
+
+def add_time_columns(
+    df: pd.DataFrame,
+    date_column: str = "requested_datetime"
+) -> pd.DataFrame:
+    """
     Add time-based columns for temporal analysis.
 
     Parameters
@@ -93,8 +134,7 @@ def add_time_columns(df: pd.DataFrame, date_column: str = "requested_datetime") 
         Month in which the report was submitted.
     year_month : datetime64
         First day of the corresponding month, useful for monthly time series plots.
-    '''
-
+    """
     df_cleaned = df.copy()
 
     if date_column in df_cleaned.columns:
@@ -109,9 +149,8 @@ def add_time_columns(df: pd.DataFrame, date_column: str = "requested_datetime") 
     return df_cleaned
 
 
-# create only one big function for cleaning the dataset
 def clean_reports(df: pd.DataFrame) -> pd.DataFrame:
-    '''
+    """
     Run the full cleaning workflow for the ZüriWieNeu dataset.
 
     Parameters
@@ -128,12 +167,16 @@ def clean_reports(df: pd.DataFrame) -> pd.DataFrame:
     --------------
     1. Convert datetime columns from text to datetime format.
     2. Remove duplicate reports based on service_request_id.
-    3. Add year, month, and year_month columns for time-based analysis.
-    '''
+    3. Drop service_code if it is identical to service_name.
+    4. Add year, month, and year_month columns for time-based analysis.
+    """
+    # We intentionally keep all source columns through cleaning rather than
+    # slimming the DataFrame here, so that later notebooks can use any field
+    # (e.g. status, interface_used) without re-loading the raw CSV.
 
-    df_cleaned = parse_datetime_columns(df)
-    df_cleaned = remove_duplicate_reports(df_cleaned)
-    df_cleaned = add_time_columns(df_cleaned)
+    df_cleaned = parse_datetime_columns(df)              # step 1: timestamps → naive datetime
+    df_cleaned = remove_duplicate_reports(df_cleaned)    # step 2: drop duplicate service_request_ids
+    df_cleaned = drop_redundant_service_code(df_cleaned) # step 3: drop service_code if == service_name
+    df_cleaned = add_time_columns(df_cleaned)            # step 4: derive year / month / year_month
 
     return df_cleaned
-

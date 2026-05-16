@@ -7,8 +7,15 @@ def reports_to_geodataframe(
     y_column: str = "n",
     crs: str = "EPSG:2056"
 ) -> gpd.GeoDataFrame:
-    '''
+    """
     Convert ZüriWieNeu report data into a GeoDataFrame using coordinate columns.
+
+    The ZüriWieNeu CSV already contains a 'geometry' column in WKT format,
+    but it is a plain string, not a parsed geometry. This function ignores
+    it and builds a fresh shapely geometry from the numeric `e` (easting)
+    and `n` (northing) columns in LV95 (EPSG:2056). The WKT column is
+    dropped first so the new geometry isn't accidentally mixed with the
+    string version.
 
     Parameters
     ----------
@@ -25,12 +32,18 @@ def reports_to_geodataframe(
     -------
     geopandas.GeoDataFrame
         GeoDataFrame with point geometries for each report.
-    '''
+    """
+    df_local = df.copy()
+
+    # drop the WKT string column if present so we don't end up with two
+    # 'geometry' columns or rely on silent overwrites
+    if "geometry" in df_local.columns:
+        df_local = df_local.drop(columns="geometry")
 
     gdf_reports = gpd.GeoDataFrame(
-        df.copy(),
-        geometry=gpd.points_from_xy(df[x_column], df[y_column]),
-        crs=crs
+        df_local,
+        geometry=gpd.points_from_xy(df_local[x_column], df_local[y_column]),
+        crs=crs,
     )
 
     return gdf_reports
@@ -40,7 +53,7 @@ def join_reports_to_quartiere(
     reports_gdf: gpd.GeoDataFrame,
     quartiere_gdf: gpd.GeoDataFrame
 ) -> gpd.GeoDataFrame:
-    '''
+    """
     Spatially join ZüriWieNeu report points to Zurich Quartier polygons.
 
     Parameters
@@ -55,13 +68,17 @@ def join_reports_to_quartiere(
     geopandas.GeoDataFrame
         Report GeoDataFrame with additional Quartier attributes such as
         qname, qnr, kname, and knr.
-    '''
+    """
+    # both GDFs must share the same CRS (EPSG:2056); sjoin does not reproject automatically
+    assert reports_gdf.crs == quartiere_gdf.crs, (
+        f"CRS mismatch: reports={reports_gdf.crs}, quartiere={quartiere_gdf.crs}"
+    )
 
     reports_with_quartiere = gpd.sjoin(
         reports_gdf,
         quartiere_gdf[["qname", "qnr", "kname", "knr", "geometry"]],
         how="left",
-        predicate="within"
+        predicate="within",
     )
 
     return reports_with_quartiere
