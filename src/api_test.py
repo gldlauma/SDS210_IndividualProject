@@ -6,7 +6,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 def fetch_zueriwieneu_api(start_date, end_date, sleep_seconds=0.5):
-    """
+    '''
     Fetch ZüriWieNeu reports from the Open311 Web API.
 
     The Open311 endpoint caps the number of records returned per request,
@@ -31,7 +31,7 @@ def fetch_zueriwieneu_api(start_date, end_date, sleep_seconds=0.5):
     -------
     pandas.DataFrame
         ZüriWieNeu reports with WGS84 coordinates in 'lat' and 'long'.
-    """
+    '''
     api_url = "https://www.zueriwieneu.ch/open311/v2/requests.json"
     all_reports = []
 
@@ -68,7 +68,7 @@ def fetch_zueriwieneu_api(start_date, end_date, sleep_seconds=0.5):
 
 
 def reproject_to_lv95(df, lat_col="lat", long_col="long"):
-    """
+    '''
     Reproject WGS84 coordinates to Swiss CH1903+ / LV95.
 
     Adds 'e' (easting) and 'n' (northing) columns to the DataFrame so
@@ -86,7 +86,7 @@ def reproject_to_lv95(df, lat_col="lat", long_col="long"):
     -------
     pandas.DataFrame
         Reports with added 'e' and 'n' columns in metres (EPSG:2056).
-    """
+    '''
     df = df.copy()
 
     # The API returns coordinates as strings; convert to float first
@@ -111,7 +111,7 @@ def load_zueriwieneu(
     cache_path="../data/processed/zueriwieneu_api_cache.csv",
     refresh=False,
 ):
-    """
+    '''
     Load ZüriWieNeu reports from the Open311 API with local caching.
 
     On the first run, or when refresh=True, the data is fetched from the
@@ -135,7 +135,7 @@ def load_zueriwieneu(
     pandas.DataFrame
         Raw ZüriWieNeu report data with 'e' and 'n' columns in LV95,
         ready for cleaning.
-    """
+    '''
     cache_path = Path(cache_path)
 
     if end_date is None:

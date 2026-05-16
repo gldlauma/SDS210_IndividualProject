@@ -7,7 +7,7 @@ def reports_to_geodataframe(
     y_column: str = "n",
     crs: str = "EPSG:2056"
 ) -> gpd.GeoDataFrame:
-    """
+    '''
     Convert ZüriWieNeu report data into a GeoDataFrame using coordinate columns.
 
     Parameters
@@ -25,7 +25,7 @@ def reports_to_geodataframe(
     -------
     geopandas.GeoDataFrame
         GeoDataFrame with point geometries for each report.
-    """
+    '''
 
     gdf_reports = gpd.GeoDataFrame(
         df.copy(),
@@ -40,7 +40,7 @@ def join_reports_to_quartiere(
     reports_gdf: gpd.GeoDataFrame,
     quartiere_gdf: gpd.GeoDataFrame
 ) -> gpd.GeoDataFrame:
-    """
+    '''
     Spatially join ZüriWieNeu report points to Zurich Quartier polygons.
 
     Parameters
@@ -55,7 +55,7 @@ def join_reports_to_quartiere(
     geopandas.GeoDataFrame
         Report GeoDataFrame with additional Quartier attributes such as
         qname, qnr, kname, and knr.
-    """
+    '''
 
     reports_with_quartiere = gpd.sjoin(
         reports_gdf,

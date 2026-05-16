@@ -1,6 +1,5 @@
 import pandas as pd
 
-# Function: converting date columns from text to datetime format
 def parse_datetime_columns(df: pd.DataFrame) -> pd.DataFrame:
     '''
 Convert date columns in the ZüriWieNeu dataset from text to datetime format.
@@ -22,7 +21,7 @@ df : pandas.DataFrame
 -------
 pandas.DataFrame
     DataFrame with parsed datetime columns.
-'''
+    '''
 
     df_cleaned = df.copy()
 
@@ -43,13 +42,8 @@ pandas.DataFrame
 
     return df_cleaned
 
-
-# Function: removing any existing duplicate reports based on their ID
-def remove_duplicate_reports(
-    df: pd.DataFrame,
-    id_column: str = "service_request_id"
-) -> pd.DataFrame:
-    """
+def remove_duplicate_reports(df: pd.DataFrame, id_column: str = "service_request_id") -> pd.DataFrame:
+    '''
     Remove duplicate reports from the ZüriWieNeu dataset based on the unique
     service request ID.
 
@@ -64,7 +58,7 @@ def remove_duplicate_reports(
     -------
     pandas.DataFrame
         DataFrame with duplicate reports removed.
-    """
+    '''
 
     df_cleaned = df.copy()
 
@@ -76,7 +70,7 @@ def remove_duplicate_reports(
 
 # Function: converting date columns from text to datetime format
 def add_time_columns(df: pd.DataFrame, date_column: str = "requested_datetime") -> pd.DataFrame:
-    """
+    '''
     Add time-based columns for temporal analysis.
 
     Parameters
@@ -99,7 +93,7 @@ def add_time_columns(df: pd.DataFrame, date_column: str = "requested_datetime") 
         Month in which the report was submitted.
     year_month : datetime64
         First day of the corresponding month, useful for monthly time series plots.
-    """
+    '''
 
     df_cleaned = df.copy()
 
@@ -117,7 +111,7 @@ def add_time_columns(df: pd.DataFrame, date_column: str = "requested_datetime") 
 
 # create only one big function for cleaning the dataset
 def clean_reports(df: pd.DataFrame) -> pd.DataFrame:
-    """
+    '''
     Run the full cleaning workflow for the ZüriWieNeu dataset.
 
     Parameters
@@ -135,7 +129,7 @@ def clean_reports(df: pd.DataFrame) -> pd.DataFrame:
     1. Convert datetime columns from text to datetime format.
     2. Remove duplicate reports based on service_request_id.
     3. Add year, month, and year_month columns for time-based analysis.
-    """
+    '''
 
     df_cleaned = parse_datetime_columns(df)
     df_cleaned = remove_duplicate_reports(df_cleaned)

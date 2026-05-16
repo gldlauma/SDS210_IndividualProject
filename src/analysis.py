@@ -5,7 +5,7 @@ def count_reports_by_year(
     df: pd.DataFrame,
     year_column: str = "year"
 ) -> pd.DataFrame:
-    """
+    '''
     Count the number of ZüriWieNeu reports per year.
 
     Parameters
@@ -26,7 +26,7 @@ def count_reports_by_year(
         Calendar year.
     report_count : int
         Number of reports submitted in that year.
-    """
+    '''
 
     yearly_counts = (
         df
@@ -43,7 +43,7 @@ def count_reports_by_month(
     df: pd.DataFrame,
     month_column: str = "year_month"
 ) -> pd.DataFrame:
-    """
+    '''
     Count the number of ZüriWieNeu reports per month.
 
     Parameters
@@ -64,7 +64,7 @@ def count_reports_by_month(
         Month of the reports, represented by the first day of that month.
     report_count : int
         Number of reports submitted in that month.
-    """
+    '''
 
     monthly_counts = (
         df
@@ -82,7 +82,7 @@ def count_reports_by_year_and_category(
     year_column: str = "year",
     category_column: str = "service_name"
 ) -> pd.DataFrame:
-    """
+    '''
     Count the number of ZüriWieNeu reports per year and category.
 
     Parameters
@@ -107,7 +107,7 @@ def count_reports_by_year_and_category(
         Report category.
     report_count : int
         Number of reports in that year and category.
-    """
+    '''
 
     category_counts = (
         df
