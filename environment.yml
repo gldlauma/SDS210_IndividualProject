@@ -1,12 +1,18 @@
 name: sds-env
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - python=3.14
+  - jupyter
+  - pandas
+  - matplotlib
+  - seaborn
   - geopandas
-  - geopy
-  - tqdm
   - shapely
-  - cmcrameri
   - contextily
+  - geopy
+  - requests
+  - tqdm
+  - cmcrameri
 prefix: /Users/laumagoldmann/miniconda3/envs/sds-env

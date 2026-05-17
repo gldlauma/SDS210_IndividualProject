@@ -1,6 +1,0 @@
-pandas
-geopandas
-shapely
-matplotlib
-jupyter
-notebook

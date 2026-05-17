@@ -48,9 +48,10 @@ SDS210_IndividualProject/
 
 - data/
   - raw/
-    - ZüriWieNeu raw CSV file
+    - stzh.zwn_meldungen_p.csv
     - StatQuartiere_ZH/
       - Zurich Quartiere shapefile files
+    - bev324od3240.csv
   - processed/
     - zueriwieneu_cleaned.csv
 
@@ -72,7 +73,7 @@ SDS210_IndividualProject/
   - analysis.py
   - spatial.py
 
-- requirements.txt
+- environment.yml
 - README.md
 
 ---
@@ -235,11 +236,14 @@ Saved visualizations are stored in:
 
 This project uses Python and Jupyter notebooks.
 
-The required Python packages are listed in `requirements.txt`.
+The conda environment is defined in `environment.yml` (environment name: `sds-env`).
 
-To install the required packages, run:
+To create and activate the environment, run:
 
-`pip install -r requirements.txt`
+```bash
+conda env create -f environment.yml
+conda activate sds-env
+```
 
 Main libraries used:
 
@@ -247,6 +251,10 @@ Main libraries used:
 - `geopandas` for spatial data processing
 - `shapely` for geometry operations
 - `matplotlib` for static visualizations and maps
+- `contextily` for basemap tiles in spatial plots
+- `cmcrameri` for scientific colourmaps
+- `geopy` for geocoding utilities
+- `tqdm` for progress bars
 - `jupyter` / `notebook` for running the notebooks
 
 ---
@@ -255,9 +263,12 @@ Main libraries used:
 
 1. Clone or download the project folder.
 
-2. Install the required packages:
+2. Create and activate the conda environment:
 
-`pip install -r requirements.txt`
+```bash
+conda env create -f environment.yml
+conda activate sds-env
+```
 
 3. Place the raw ZüriWieNeu CSV file in:
 
