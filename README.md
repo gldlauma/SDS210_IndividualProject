@@ -270,15 +270,17 @@ conda env create -f environment.yml
 conda activate sds-env
 ```
 
-3. Place the raw ZüriWieNeu CSV file in:
+3. Place the following files in `data/raw/` with these exact names:
 
-`data/raw/`
+| File | Description |
+|----------------------------|-----------------------------------------------------------------|
+| `stzh.zwn_meldungen_p.csv` | ZüriWieNeu report data (Open Data Zürich)                       |
+| `bev324od3240.csv`         | Population by Quartier (Open Data Zürich, dataset BEV324OD3240) |
+| `StatQuartiere_ZH/`        | Folder containing the Zurich Quartiere shapefiles               |
 
-4. Place the Zurich Quartiere shapefile folder in:
+The filenames are hardcoded in the notebooks and must match exactly (including case).
 
-`data/raw/StatQuartiere_ZH/`
-
-5. Run the notebooks in the following order:
+4. Run the notebooks in the following order:
 
 - `00_dataexploration.ipynb`
 - `01_R1.ipynb`
@@ -288,6 +290,7 @@ conda activate sds-env
 
 The first notebook prepares and explores the data. The following notebooks each answer one research question.
 
+Note: Always select sds-env as Kernel for execution of the notebooks.
 ---
 
 ## Notes on Interpretation
