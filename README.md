@@ -228,7 +228,7 @@ The project includes several visualizations:
 
 Saved visualizations are stored in:
 
-`output/figures/`
+`outputs`
 
 ---
 
@@ -249,12 +249,8 @@ Main libraries used:
 
 - `pandas` for data loading, cleaning, and tabular analysis
 - `geopandas` for spatial data processing
-- `shapely` for geometry operations
 - `matplotlib` for static visualizations and maps
-- `contextily` for basemap tiles in spatial plots
-- `cmcrameri` for scientific colourmaps
-- `geopy` for geocoding utilities
-- `tqdm` for progress bars
+- `seaborn`for kernel density estimation and visualisation
 - `jupyter` / `notebook` for running the notebooks
 
 ---
